@@ -25,7 +25,12 @@ class get_allowed:
                 "minitalk": ["write", "signal", "sigemptyset", "sigaddset", "sigaction", "kill", "getpid", "malloc", "free", "pause", "sleep", "usleep", "exit"],
                 "pipex": ["open", "close", "read", "write", "malloc", "free", "perror", "strerror", "access", "dup", "dup2", "execve", "exit", "fork", "pipe", "unlink", "wait", "waitpid"],
                 "push_swap": ["read", "write", "malloc", "free", "exit"],
-                "so_long": ["open", "close", "read", "write", "malloc", "free", "perror", "strerror", "exit"]
+                "so_long": ["open", "close", "read", "write", "malloc", "free", "perror", "strerror", "exit"],
+                "fdf": ["open", "close", "read", "write", "malloc", "free", "perror", "strerror", "exit"],
+                "fractol": ["open", "close", "read", "write", "malloc", "free", "perror", "strerror", "exit"],
+                "philo": ["memset", "printf", "malloc", "free", "write", "usleep", "gettimeofday", "pthread_create", "pthread_detach", "pthread_join", "pthread_mutex_init", "pthread_mutex_destroy", "pthread_mutex_lock", "pthread_mutex_unlock"],
+                "philo_bonus": ["memset", "printf", "malloc", "free", "write", "fork", "kill", "exit", "pthread_create", "pthread_detach", "pthread_join", "usleep", "gettimeofday", "waitpid", "sem_open", "sem_close", "sem_post", "sem_wait", "sem_unlink"]
+
         }
     def functions(self, project):
         if project in self.allowed_functions:
@@ -63,7 +68,7 @@ def functions(path):
     allowed = get_allowed()
     for project_name in project:
         allows.extend(allowed.functions(project_name))
-        if project_name in ["fractol", "sol_long"]:
+        if project_name in ["fractol", "sol_long", "fdf"]:
             allows.extend(gld.get_library_definitions("math.h"))
 #    print(allows)
 
@@ -124,8 +129,8 @@ if __name__ == "__main__":
     import argparse
     args = ft_parser()
     functions(args.path)
-    print("Undefined:")
     c = [call for call in calls if call not in definitions]
+    print("Undefined:")
     for call in c:
         if call and call not in allows:
             print(f'Functions: {call}, File: {calls[call]["file"]}, Line: {calls[call]["line"]}')
