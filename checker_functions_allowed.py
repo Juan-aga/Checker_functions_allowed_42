@@ -29,9 +29,12 @@ class get_allowed:
                 "fdf": ["open", "close", "read", "write", "malloc", "free", "perror", "strerror", "exit"],
                 "fractol": ["open", "close", "read", "write", "malloc", "free", "perror", "strerror", "exit"],
                 "philo": ["memset", "printf", "malloc", "free", "write", "usleep", "gettimeofday", "pthread_create", "pthread_detach", "pthread_join", "pthread_mutex_init", "pthread_mutex_destroy", "pthread_mutex_lock", "pthread_mutex_unlock"],
-                "philo_bonus": ["memset", "printf", "malloc", "free", "write", "fork", "kill", "exit", "pthread_create", "pthread_detach", "pthread_join", "usleep", "gettimeofday", "waitpid", "sem_open", "sem_close", "sem_post", "sem_wait", "sem_unlink"]
-
+                "philo_bonus": ["memset", "printf", "malloc", "free", "write", "fork", "kill", "exit", "pthread_create", "pthread_detach", "pthread_join", "usleep", "gettimeofday", "waitpid", "sem_open", "sem_close", "sem_post", "sem_wait", "sem_unlink"],
+                "minishell": ["readline", "rl_clear_history", "rl_on_new_line", "rl_replace_line", "rl_redisplay", "add_history", "printf", "malloc", "free", "write", "access", "open", "read", "close", "fork", "wait", "waitpid", "wait3", "wait4", "signal", "sigaction", "sigemptyset", "sigaddset", "kill", "exit", "getcwd", "chdir", "stat", "lstat", "fstat", "unlink", "execve", "dup", "dup2", "pipe", "opendir", "readdir", "closedir", "strerror", "perror", "isatty", "ttyname", "ttyslot", "ioctl", "getenv", "tcsetattr", "tcgetattr", "tgetent", "tgetflag", "tgetnum", "tgetstr", "tgoto", "tputs"],
+                "cub3D": ["open", "close", "read", "write", "printf", "malloc", "free", "perror", "strerror", "exit"],
+                "miniRT": ["open", "close", "read", "write", "printf", "malloc", "free", "perror", "strerror",     "exit"]
         }
+        
     def functions(self, project):
         if project in self.allowed_functions:
             return self.allowed_functions[project]
@@ -68,7 +71,7 @@ def functions(path):
     allowed = get_allowed()
     for project_name in project:
         allows.extend(allowed.functions(project_name))
-        if project_name in ["fractol", "sol_long", "fdf"]:
+        if project_name in ["fractol", "sol_long", "fdf", "cub3D", "miniRT"]:
             allows.extend(gld.get_library_definitions("math.h"))
 #    print(allows)
 
