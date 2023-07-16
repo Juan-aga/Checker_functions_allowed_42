@@ -1,6 +1,10 @@
-import clang.cindex
+import sys
+try:
+    import clang.cindex
+except:
+    sys.exit("Clang library not installed.\nTry \"pip3 install libclang\"")
+
 import os
-import argparse
 import re
 import get_library_definitions as gld
 
@@ -117,6 +121,7 @@ def ft_parser():
     return parse.parse_args()
 
 if __name__ == "__main__":
+    import argparse
     args = ft_parser()
     functions(args.path)
     print("Undefined:")

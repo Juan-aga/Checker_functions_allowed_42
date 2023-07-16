@@ -1,6 +1,10 @@
 import subprocess
 import os
-import clang.cindex
+import sys
+try:
+    import clang.cindex
+except:
+    sys.exit("Clang library not installed.\nTry \"pip3 install libclang\"")
 
 declared = {}
 
