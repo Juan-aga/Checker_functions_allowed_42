@@ -16,6 +16,32 @@ only_definitions = ["MLX42", "minilibx"]
 project = set()
 allows = []
 
+
+
+class checked_functions:
+    def __init__(self):
+        self.functions = {"declarations": {}, "calls": {}, "allows": [], "undefined":{}}
+    def add(self, key, name, file, line):
+        if not key in self.functions:
+            print(f'Not key {key} in functions.')
+            return
+        if name in self.functions[key]:
+            self.functions[key][name]['file'].append(file)
+            self.functions[key][name]['line'].append(line)
+        else:
+            self.functions[key][name] = {'file':[file], 'line':[line]}
+    def print(self, key):
+        print(f'{key} functions:')
+        for name, info in self.functions[key].items():
+            print(f'\t{name}')
+            file = info['file']
+            line = info['line']
+            for i in range(len(file)):
+                print(f'\t\tFile: {file[i]}\t\tLine: {line[i]}')
+
+
+checked = checked_functions()
+
 class get_allowed:
     def __init__(self):
         self.allowed_functions = {
@@ -48,32 +74,19 @@ def ft_get_functions(file_name):
     for node in code.cursor.walk_preorder():
         if node.kind == clang.cindex.CursorKind.FUNCTION_DECL:
             if node.location.file and str(node.location.file) == file_name:
-                line = node.location.line
-                definitions[node.spelling] = {'file':file_name, 'line':line}
+                checked.add("declarations", node.spelling, file_name, node.location.line)
         elif node.kind == clang.cindex.CursorKind.CALL_EXPR:
             if not any(only in only_definitions for only in name_split):
-                line = node.location.line
-                column = node.location.column
-                to_add = {'file':file_name, 'line':line, 'column':column}
-                if node.spelling in calls:
-                    for key, value in to_add.items():
-                        if key in calls[node.spelling]:
-                            calls[node.spelling][key].append(value)
-                        else:
-                            calls[node.spelling][key] = [value]
-                else:
-                    calls[node.spelling] = {'file':[file_name], 'line':[line], 'column':[column]}
-
+                checked.add("calls", node.spelling, file_name, node.location.line)
 
 def functions(path):
     for files in ft_list_files(path):
         ft_get_functions(files)
     allowed = get_allowed()
     for project_name in project:
-        allows.extend(allowed.functions(project_name))
+        checked.functions['allows'].extend(allowed.functions(project_name))
         if project_name in ["fractol", "sol_long", "fdf", "cub3D", "miniRT"]:
-            allows.extend(gld.get_library_definitions("math.h"))
-#    print(allows)
+            checked.functions['allows'].extend(gld.get_library_definitions("math.h"))
 
 def ft_list_files(path):
     try:
@@ -110,7 +123,6 @@ def ft_get_project(make):
     find = re.search(pattern, makefile, re.MULTILINE)
     global project
     if find:
-#        print(os.path.splitext(find.group(1))[0])
         project.add(os.path.splitext(find.group(1))[0])
     else:
         print(f'{variable_name} not find in {make}')
@@ -141,3 +153,7 @@ if __name__ == "__main__":
 #    for call in calls:
 #        print(f'Functions: {call}, File: {calls[call]["file"]}, Line: {calls[call]["line"]}')
     print(f'Project: {project}')
+    checked.print("declarations")
+    checked.print('calls')
+    print(f'Allows: {checked.functions["allows"]}')
+
